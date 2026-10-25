@@ -19,7 +19,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/yash-pethkar-56702a334" as string,
   // Place your PDF at /public/resume.pdf, then set this to true.
   resumeAvailable: true as boolean,
-  resumePath: "/YashPethkarIT.pdf",
+  resumePath: "/resume.pdf",
 };
 
 export const navLinks = [
