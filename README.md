@@ -1,85 +1,105 @@
 # Yash Pethkar | Developer Portfolio
 
-Next.js (App Router) + TypeScript + Tailwind CSS + Framer Motion + Lucide icons. Built to deploy on Vercel.
+Personal portfolio built with Next.js 14 (App Router), TypeScript, Tailwind CSS, Framer Motion and Lucide icons. Deployed on Vercel.
 
-## Edit your content
+Repository: https://github.com/yash-pethkar18/Portfolio
 
-Everything (name, links, skills, projects, experience, achievements) lives in **`src/data/portfolio.ts`**.
+## Editing content
 
-Things you still need to fill in:
+All content (name, links, skills, projects, experience, education, achievements) lives in **`src/data/portfolio.ts`**. Edit that file instead of the components.
 
-| What | Where | Notes |
-| --- | --- | --- |
-| GitHub URL | `profile.github` | Hidden until set |
-| LinkedIn URL | `profile.linkedin` | Hidden until set |
-| Project source link | `projects[0].githubUrl` | Hidden until set |
-| Resume PDF | put it at `public/resume.pdf`, then set `profile.resumeAvailable = true` | The download buttons only appear when this is true |
+| What | Where |
+| --- | --- |
+| GitHub / LinkedIn URLs | `profile.github`, `profile.linkedin` (hidden while `null`) |
+| Project links | `projects[].liveUrl`, `projects[].githubUrl` (hidden while `null`) |
+| Resume | `public/resume.pdf`, shown when `profile.resumeAvailable` is `true` |
+
+To replace the resume, overwrite `public/resume.pdf` with the new file and keep the same name. Note that the file is publicly downloadable.
 
 ## Run locally
 
+Requires Node.js 18.18 or newer (LTS recommended).
+
 ```bash
-npm install          # install dependencies and create package-lock.json
-cp .env.example .env.local   # then edit values (see below)
-npm run dev          # http://localhost:3000
+npm install
+copy .env.example .env.local      # Windows PowerShell (macOS/Linux: cp)
+npm run dev                       # http://localhost:3000, stop with Ctrl + C
 ```
 
-Test on a phone: run `npm run dev -- -H 0.0.0.0` and open `http://<your-computer-ip>:3000` on the same Wi-Fi. Also check with browser dev tools at 320, 375, 390, 768, 1024 and 1440 px.
-
-## Production check
+Production check:
 
 ```bash
 npm run typecheck
 npm run lint
 npm run build
-npm run start        # serves the production build locally
+npm run start
 ```
 
-## Contact form (Resend)
+Do not run `npm run dev` and `npm run build` at the same time.
 
-The form posts to `/api/contact`, which sends email through [Resend](https://resend.com) using server-side environment variables. No keys are exposed to the browser.
+## Environment variables
 
-1. Create a free Resend account and an API key.
-2. Set these in `.env.local` (and later in Vercel):
+Set these in `.env.local` locally and in Vercel under Settings > Environment Variables. Never commit `.env.local`.
 
-```
-RESEND_API_KEY=re_xxx
-CONTACT_TO_EMAIL=yashpethkar77@gmail.com
-CONTACT_FROM_EMAIL=onboarding@resend.dev
-NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
-```
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL, used for metadata, sitemap and robots.txt |
+| `RESEND_API_KEY` | Resend API key (server-side only) |
+| `CONTACT_TO_EMAIL` | Where contact messages are delivered |
+| `CONTACT_FROM_EMAIL` | Sender address. `onboarding@resend.dev` is for testing |
 
-`onboarding@resend.dev` works for testing (Resend only delivers it to your own account email). For production, verify your own domain in Resend and use an address on it.
+### Contact form (Resend)
 
-Until `RESEND_API_KEY` is set, the form shows an error message with your email address as a fallback. It never pretends a message was sent.
+The form posts to `/api/contact`, which sends email through [Resend](https://resend.com).
 
-## Push to GitHub
+1. Sign up at resend.com with the same email as `CONTACT_TO_EMAIL`.
+2. Open **API Keys > Create API Key**, name it `portfolio`, choose **Sending access**, and copy the `re_...` key (shown once).
+3. Add it as `RESEND_API_KEY`.
+
+With the test sender `onboarding@resend.dev`, Resend only delivers to your own account email. To send to other addresses, verify a domain you own in Resend and use an address on it.
+
+If `RESEND_API_KEY` is missing, the form shows an error with your email as a fallback. It never reports a message as sent when it was not.
+
+## Deploy
+
+### 1. Push to GitHub
 
 ```bash
-git init
 git add .
-git commit -m "Initial portfolio"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
-git push -u origin main
+git commit -m "Describe your change"
+git push
 ```
 
-Create the empty repository on github.com first. Commit `package-lock.json`.
+### 2. Vercel
 
-## Deploy on Vercel
+1. Log in to vercel.com with GitHub.
+2. **Add New > Project**, import this repository.
+3. Keep the detected Next.js settings.
+4. Add the four environment variables above.
+5. Click **Deploy**.
+6. After the first deploy, set `NEXT_PUBLIC_SITE_URL` to your real URL (including `https://`) and redeploy.
 
-1. Go to vercel.com, sign in with GitHub, click **Add New... > Project**, and import the repository.
-2. Framework preset is detected automatically (Next.js). Leave build settings as default.
-3. Under **Environment Variables**, add the four variables above.
-4. Click **Deploy**.
-5. Open the production URL and verify: all sections, mobile menu, resume download, and a test contact-form submission.
-6. Update `NEXT_PUBLIC_SITE_URL` to the final URL (or your custom domain) and redeploy so the sitemap and Open Graph tags are correct.
+Every later `git push` to `main` redeploys automatically.
+
+### 3. Verify the live site
+
+- All sections load, and the mobile menu works on a phone.
+- The Live Demo link opens.
+- The resume download works.
+- A test message through the contact form arrives in your inbox (check spam too).
 
 ## Project structure
 
 ```
 src/
-  app/            layout, page, API route, robots, sitemap, icon, OG image
-  components/     Navbar, Hero, About, Skills, Projects, Experience, Achievements, Contact, Footer
-  data/           portfolio.ts (all content)
-public/           place resume.pdf here
+  app/          layout, page, API route (contact), robots, sitemap, icon
+  components/   Navbar, Hero, About, Skills, Projects, Experience, Achievements, Contact, Footer
+  data/         portfolio.ts (all content)
+public/         resume.pdf
 ```
+
+## Notes
+
+- **Social preview image:** not generated. Next's built-in image generator failed to build on Windows. To add one, put a 1200x630 `og.png` in `public/` and reference it in the `openGraph.images` field in `src/app/layout.tsx`.
+- **Dependency audit:** `npm audit` reports advisories against Next.js 14. The patched line is Next 16, which is a breaking upgrade (React 19, new ESLint setup). Plan this as a separate change and confirm the build before deploying.
+- **Render demo:** the project demo is hosted on Render's free tier, so the first load after idle time can take around a minute.
